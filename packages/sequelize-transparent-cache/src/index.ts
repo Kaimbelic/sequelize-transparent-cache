@@ -9,7 +9,17 @@ interface CacheableModelClass extends ModelStatic<Model<any, any>> {
   };
 }
 
+/**
+ * Initializes the cache client and returns an object with the withCache method.
+ * @param client - The cache client.
+ * @returns An object containing the withCache method.
+ */
 export default (client: any) => ({
+  /**
+   * Adds caching methods to a Sequelize model class.
+   * @param modelClass - The Sequelize model class.
+   * @returns The model class with caching methods.
+   */
   withCache<T extends ModelStatic<Model>>(modelClass: T): T & CacheableModelClass {
     (modelClass as any).cache = function (customId?: string) {
       return customId

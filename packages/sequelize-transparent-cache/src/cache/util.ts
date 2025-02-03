@@ -1,9 +1,21 @@
 import { Model, ModelStatic, BuildOptions } from 'sequelize';
 
+/**
+ * Converts a Sequelize instance to a plain object.
+ * @param instance - The Sequelize model instance.
+ * @returns The plain object representation of the instance.
+ */
 function instanceToData(instance: Model): Record<string, any> {
   return instance.get({ plain: true });
 }
 
+/**
+ * Converts a plain object to a Sequelize instance.
+ * @param model - The Sequelize model.
+ * @param data - The plain object data.
+ * @param depth - The depth of associations to include.
+ * @returns The Sequelize model instance.
+ */
 function dataToInstance(model: ModelStatic<Model>, data: Record<string, any> | null, depth = 1): Model | null {
   if (!data) {
     return null;
@@ -14,6 +26,11 @@ function dataToInstance(model: ModelStatic<Model>, data: Record<string, any> | n
   return instance;
 }
 
+/**
+ * Restores timestamp fields in a Sequelize instance.
+ * @param data - The plain object data.
+ * @param instance - The Sequelize model instance.
+ */
 function restoreTimestamps(data: Record<string, any>, instance: Model): void {
   const timestampFields = ['createdAt', 'updatedAt', 'deletedAt'];
 
@@ -53,6 +70,13 @@ function restoreTimestamps(data: Record<string, any>, instance: Model): void {
   });
 }
 
+/**
+ * Generates the include options for nested associations.
+ * @param model - The Sequelize model.
+ * @param depth - The current depth of associations.
+ * @param maxDepth - The maximum depth of associations.
+ * @returns The include options for nested associations.
+ */
 function generateIncludeRecurse(model: ModelStatic<Model>, depth = 1, maxDepth = 2): any[] {
   if (depth > maxDepth) {
     return [];
