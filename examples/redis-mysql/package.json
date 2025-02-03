@@ -1,12 +1,18 @@
 {
   "name": "redis-mysql-example",
-  "main": "app.js",
+  "version": "1.0.0",
+  "main": "dist/app.js",
   "scripts": {
-    "start": "node app.js"
+    "build": "tsc",
+    "start": "ts-node app.ts"
   },
   "dependencies": {
-    "ioredis": "^4.6.2",
-    "mysql2": "^2.1.0",
-    "sequelize": "^5.1.0"
+    "ioredis": "^5.4.2",
+    "mysql2": "^3.12.0",
+    "sequelize": "^6.37.5"
+  },
+  "devDependencies": {
+    "typescript": "^4.0.0",
+    "ts-node": "^10.0.0"
   }
 }
