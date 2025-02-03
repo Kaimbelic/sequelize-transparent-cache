@@ -6,7 +6,8 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "outDir": "./dist",
-    "declaration": true
+    "declaration": true,
+    "sourceMap": true // Add source maps for easier debugging
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

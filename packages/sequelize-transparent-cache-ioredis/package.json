@@ -2,7 +2,8 @@
   "name": "sequelize-transparent-cache-ioredis",
   "version": "2.3.0",
   "description": "ioredis adaptor for sequelize-transparent-cache",
-  "main": "src/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "keywords": [
     "sequelize",
     "cache",
@@ -23,9 +24,11 @@
   "license": "CC-BY-4.0",
   "devDependencies": {
     "@types/node": "^22.13.0",
-    "ioredis": "^5.4.2"
+    "ioredis": "^5.4.2",
+    "typescript": "^5.0.0"
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "clean": "rm -rf dist"
   }
 }
