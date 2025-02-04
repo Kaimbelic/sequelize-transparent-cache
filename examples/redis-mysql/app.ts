@@ -1,7 +1,7 @@
 import Redis from 'ioredis'
-import IORedisAdaptor from '../../packages/sequelize-transparent-cache-ioredis/src/io-redis-adaptor'
-import sequelizeCache from '../../packages/sequelize-transparent-cache/src'
-import { Sequelize, Model, DataTypes, Op } from 'sequelize'
+import IORedisAdaptor from '../../packages/sequelize-transparent-cache-ioredis/dist'
+import sequelizeCache from '../../packages/sequelize-transparent-cache/dist'
+import { Sequelize,Op } from 'sequelize'
 import { User } from './models/user'
 
 const redis = new Redis()
@@ -25,7 +25,7 @@ const sequelize = new Sequelize('database', 'root', 'password', {
 const CachedUser = withCache(User.initModel(sequelize))
 
 async function start() {
-  await sequelize.sync()
+  await sequelize.sync({ force: true }) // This will drop and recreate all tables
 
   // Create user in db and in cache
   await CachedUser.cache().create({
