@@ -4,3 +4,4 @@ coverage
 *.log
 package-lock.json
 /packages/sequelize-transparent-cache-ioredis/dist
+/packages/sequelize-transparent-cache/dist
