@@ -36,8 +36,8 @@ function restoreTimestamps(data: Record<string, any>, instance: Model): void {
 
   for (const field of timestampFields) {
     const value = data[field];
-    if (value) {
-      instance.setDataValue(field, new Date(value));
+    if (value !== undefined) {
+      instance.setDataValue(field, value ? new Date(value) : null);
     }
   }
 
