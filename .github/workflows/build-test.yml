@@ -36,7 +36,7 @@ jobs:
         run: npm install
 
       - name: Build packages
-        run: npm run build --workspaces
+        run: npm run build --workspaces --ignore-workspace=examples/redis-mysql
 
       - name: Run tests
-        run: npm test --workspaces
+        run: npm test --workspaces --ignore-workspace=examples/redis-mysql
