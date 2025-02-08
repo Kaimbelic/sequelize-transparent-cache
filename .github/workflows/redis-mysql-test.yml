@@ -32,29 +32,20 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install Package dependencies
-        run: npm install --workspaces
-
+      - name: Install dependencies
+        run: npm install
+  
       - name: Build packages
         run: npm run build --workspaces
 
-      - name: Link sequelize-transparent-cache
-        run: npm link
-        working-directory: ./packages/sequelize-transparent-cache
-
-      - name: Link sequelize-transparent-cache-ioredis
-        run: npm link
-        working-directory: ./packages/sequelize-transparent-cache-ioredis
-
-      - name: Link sequelize-transparent-cache in example
-        run: npm link sequelize-transparent-cache sequelize-transparent-cache-ioredis
-        working-directory: ./examples/redis-mysql
+      - name: Change directory to example
+        run: cd examples/redis-mysql
 
       - name: Install dependencies
-        run: npm install --prefix examples/redis-mysql
+        run: npm install
 
-      - name: Build packages
-        run: npm run build --prefix examples/redis-mysql
+      - name: Build example
+        run: npm run build
 
       - name: Run Docker Compose and tests
-        run: npm test --prefix examples/redis-mysql
+        run: npm test
