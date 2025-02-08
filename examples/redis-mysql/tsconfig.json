@@ -6,7 +6,11 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "outDir": "./dist",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "sequelize-transparent-cache": ["../../packages/sequelize-transparent-cache"],
+      "sequelize-transparent-cache-ioredis": ["../../packages/sequelize-transparent-cache-ioredis"]
+    }
   },
   "include": ["./**/*.ts"],
   "exclude": ["node_modules"]
