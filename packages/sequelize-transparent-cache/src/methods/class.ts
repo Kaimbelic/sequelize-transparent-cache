@@ -19,11 +19,11 @@ function buildAutoMethods(client: any, model: ModelStatic<Model>) {
 
     /**
      * Creates a new instance and caches it.
-     * @param args - The create values and options.
+     * @param values - The create values.
      * @returns A promise that resolves to the created instance.
      */
-    create(...args: [values?: any, options?: CreateOptions]): Promise<Model> {
-      return model.create.apply(model, args)
+    create(values: any): Promise<Model> {
+      return model.create(values)
         .then((instance: Model) => {
           return cache.save(client, instance);
         });
@@ -32,35 +32,23 @@ function buildAutoMethods(client: any, model: ModelStatic<Model>) {
     /**
      * Finds an instance by primary key and caches it.
      * @param id - The primary key.
-     * @param args - The find options.
      * @returns A promise that resolves to the found instance or null.
      */
-    findByPk(id: any, ...args: [options?: FindOptions]): Promise<Model | null> {
+    findByPk(id: any): Promise<Model | null> {
       return cache.get(client, model, id)
         .then((instance: Model | null) => {
-          console.log('instance', instance);
           if (instance) {
             return instance;
           }
 
-          return model.findByPk.apply(model, [id, ...args])
+          return model.findByPk(id)
             .then((instance: Model | null) => {
-              console.log('instance', instance);
               if (instance) {
                 return cache.save(client, instance);
               }
               return instance;
             });
         });
-    },
-
-    /**
-     * Alias for findByPk.
-     * @param args - The find options.
-     * @returns A promise that resolves to the found instance or null.
-     */
-    findById(...args: [id: any, options?: FindOptions]): Promise<Model | null> {
-      return this.findByPk.apply(this, args);
     },
 
     /**
