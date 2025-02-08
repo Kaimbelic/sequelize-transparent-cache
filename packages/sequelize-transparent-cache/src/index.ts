@@ -1,13 +1,7 @@
 import { auto as buildClassAutoMethods, manual as buildClassManualMethods } from './methods/class';
 import buildInstanceMethods from './methods/instance';
 import { Model, ModelStatic } from 'sequelize';
-
-interface CacheableModelClass extends ModelStatic<Model<any, any>> {
-  cache: (customId?: string) => any;
-  prototype: Model & {
-    cache: () => any;
-  };
-}
+import { CacheableModelClass } from './types';
 
 /**
  * Initializes the cache client and returns an object with the withCache method.
