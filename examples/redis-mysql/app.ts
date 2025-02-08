@@ -7,7 +7,7 @@ import { User } from './models/user';
 const redis = new Redis()
 
 const redisAdaptor = new IORedisAdaptor({
-  client: redis,
+  client: redis as any,
   namespace: 'model',
   lifetime: 60 * 60
 })
