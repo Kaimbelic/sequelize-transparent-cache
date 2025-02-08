@@ -1,7 +1,9 @@
 import VariableAdaptor from '../../../../sequelize-transparent-cache-variable/src';
 import sequelizeCache from '../..';
-import sequelize, { Article } from './sequelize';
-import { CacheableModelClass } from '../../types';
+import sequelize from './sequelize';
+
+// Jest imports
+import { describe, expect, test, beforeAll } from '@jest/globals';
 
 const variableAdaptor = new VariableAdaptor();
 const { withCache } = sequelizeCache(variableAdaptor);

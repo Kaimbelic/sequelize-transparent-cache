@@ -3,6 +3,9 @@ import sequelizeCache from '../..';
 import sequelize, { User } from './sequelize';
 import { CacheableModelInstance } from '../../types';
 
+// Jest imports
+import { describe, expect, test, beforeAll } from '@jest/globals';
+
 const variableAdaptor = new VariableAdaptor();
 const { withCache } = sequelizeCache(variableAdaptor);
 
