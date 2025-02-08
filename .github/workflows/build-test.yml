@@ -23,15 +23,6 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        package:
-          - sequelize-transparent-cache
-          - sequelize-transparent-cache-variable
-          - sequelize-transparent-cache-ioredis
-          - sequelize-transparent-cache-memcached
-          - sequelize-transparent-cache-memcache-plus
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -44,10 +35,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build package
-        run: npm run build
-        working-directory: ./packages/${{ matrix.package }}
+      - name: Build packages
+        run: npx lerna run build
 
       - name: Run tests
-        run: npm test
-        working-directory: ./packages/${{ matrix.package }}
+        run: npx lerna run test

@@ -2,10 +2,8 @@
 	"private": true,
 	"scripts": {
 		"build": "tsc",
-		"postinstall": "lerna bootstrap",
-		"test": "jest --config jest.json",
-		"lint": "eslint .",
-		"posttest": "codecov"
+		"postinstall": "npx lerna bootstrap",
+		"lint": "eslint ."
 	},
 	"devDependencies": {
 		"@types/node": "^13.1.7",
