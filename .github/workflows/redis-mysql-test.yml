@@ -1,4 +1,4 @@
-name: Docker Compose Test
+name: Redis MySQL Test
 
 on:
   push:
@@ -31,6 +31,12 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '22'
+
+      - name: Install Package dependencies
+        run: npm install --workspaces
+
+      - name: Build packages
+        run: npm run build --workspaces
 
       - name: Install dependencies
         run: npm install --prefix examples/redis-mysql
