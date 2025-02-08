@@ -1,6 +1,6 @@
 import VariableAdaptor from '../../../../sequelize-transparent-cache-variable/src';
 import sequelizeCache from '../..';
-import sequelize from './sequelize';
+import sequelize, { Article } from './sequelize';
 import { CacheableModelClass } from '../../types';
 
 const variableAdaptor = new VariableAdaptor();
@@ -126,6 +126,13 @@ describe('Class methods', () => {
       const articles = user.Articles[0].get();
       return articles;
     };
+
+    const queryWithMiss = await getQuery();
+
+    const queryWithHit = await getQuery();
+
+    console.log(queryWithMiss);
+    console.log(queryWithHit);
 
     // Retrieved user with Article association
     expect(await getQuery()).toEqual(

@@ -20,10 +20,11 @@ function buildAutoMethods(client: any, model: ModelStatic<Model>) {
     /**
      * Creates a new instance and caches it.
      * @param values - The create values.
+     * @param options - The create options.
      * @returns A promise that resolves to the created instance.
      */
-    create(values: any): Promise<Model> {
-      return model.create(values)
+    create(values: any, options?: CreateOptions): Promise<Model> {
+      return model.create(values, options)
         .then((instance: Model) => {
           return cache.save(client, instance);
         });
@@ -32,16 +33,17 @@ function buildAutoMethods(client: any, model: ModelStatic<Model>) {
     /**
      * Finds an instance by primary key and caches it.
      * @param id - The primary key.
+     * @param options - The find options.
      * @returns A promise that resolves to the found instance or null.
      */
-    findByPk(id: any): Promise<Model | null> {
+    findByPk(id: any, options?: FindOptions): Promise<Model | null> {
       return cache.get(client, model, id)
         .then((instance: Model | null) => {
           if (instance) {
             return instance;
           }
 
-          return model.findByPk(id)
+          return model.findByPk(id, options)
             .then((instance: Model | null) => {
               if (instance) {
                 return cache.save(client, instance);
