@@ -8,11 +8,11 @@ Stores sequelize objects in variable. Useful for debugging purposes.
 
 ## Example usage
 
-```javascript
-const VariableAdaptor = require('sequelize-transparent-cache-variable')
+```typescript
+import VariableAdaptor from 'sequelize-transparent-cache-variable';
 const variableAdaptor = new VariableAdaptor({
   store: {} // optional
-})
+});
 ```
 
 ## Constructor arguments
@@ -24,11 +24,11 @@ const variableAdaptor = new VariableAdaptor({
 ## Storing format
 Each object stored as is, keyed by id (Primary Key).
 
-```javascript
+```typescript
 adaptor.set(['modelName', 'objectId']);
 ```
 store structure:
-```javascript
+```typescript
 {
   "modelName": {
     "objectId": {...}
@@ -39,11 +39,11 @@ store structure:
 If object has multiple primary keys, object will be stored as is, keyed
 by concatenated Ids separated by comma.
 
-```javascript
+```typescript
 adaptor.set(['modelName', 'objectId1', 'objectId2']);
 ```
 store structure will be:
-```javascript
+```typescript
 {
   "modelName": {
     "objectId1,objectId2": {...}

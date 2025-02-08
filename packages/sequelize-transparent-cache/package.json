@@ -2,7 +2,8 @@
   "name": "sequelize-transparent-cache",
   "version": "2.3.0",
   "description": "Simple to use and universal cache layer for Sequelize",
-  "main": "src/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "keywords": [
     "sequelize",
     "cache",
@@ -18,10 +19,19 @@
   },
   "license": "CC-BY-4.0",
   "peerDependencies": {
-    "sequelize": ">=5"
+    "sequelize": ">=6.37.5"
   },
   "devDependencies": {
-    "sequelize": ">=5.21.6",
-    "sqlite3": "^4.1.1"
+    "@types/jest": "^29.5.14",
+    "jest": "^29.7.0",
+    "sequelize": ">=6.37.5",
+    "sqlite3": "^5.1.7",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "test": "jest"
   }
 }

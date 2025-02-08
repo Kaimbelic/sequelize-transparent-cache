@@ -3,3 +3,6 @@ node_modules
 coverage
 *.log
 package-lock.json
+/packages/sequelize-transparent-cache-ioredis/dist
+/packages/sequelize-transparent-cache/dist
+/packages/sequelize-transparent-cache-variable/dist

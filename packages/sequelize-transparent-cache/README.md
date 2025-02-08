@@ -28,53 +28,40 @@ In this example we will use [ioredis](https://www.npmjs.com/package/ioredis)
 ## Example usage
 
 ```javascript
-const Redis = require('ioredis')
-const redis = new Redis()
+const Redis = require('ioredis');
+const redis = new Redis();
 
-const RedisAdaptor = require('sequelize-transparent-cache-ioredis')
+const RedisAdaptor = require('sequelize-transparent-cache-ioredis');
 const redisAdaptor = new RedisAdaptor({
   client: redis,
   namespace: 'model',
   lifetime: 60 * 60
-})
+});
 
-const sequelizeCache = require('sequelize-transparent-cache')
-const { withCache } = sequelizeCache(redisAdaptor)
+const sequelizeCache = require('sequelize-transparent-cache');
+const { withCache } = sequelizeCache(redisAdaptor);
 
-const Sequelize = require('sequelize')
+const Sequelize = require('sequelize');
 const sequelize = new Sequelize('database', 'user', 'password', {
   dialect: 'mysql',
   host: 'localhost',
   port: 3306
-})
+});
 
-// Register and wrap your models:
-// withCache() will add cache() methods to all models and instances in sequelize v4
-const User = withCache(sequelize.import('./models/user'))
+const User = withCache(sequelize.import('./models/user'));
 
-await sequelize.sync()
+await sequelize.sync();
 
-// Cache result of arbitrary query - requires cache key
-await User.cache('active-users').findAll({
-  where: {
-    status: 'ACTIVE'
-  }
-})
-
-// Create user in db and in cache
 await User.cache().create({
   id: 1,
   name: 'Daniel'
-})
+});
 
-// Load user from cache
 const user = await User.cache().findByPk(1);
 
-// Update in db and cache
-await user.cache().update({
-  name: 'Vikki'
-})
+await user.cache().save();
 
+await user.cache().clear();
 ```
 
 Look for all examples applications in `examples` folder.
