@@ -41,6 +41,9 @@ jobs:
       - name: Change directory to example
         run: cd examples/redis-mysql
 
+      - name: ls
+        run: ls -la
+
       - name: Install dependencies
         run: npm install
 
