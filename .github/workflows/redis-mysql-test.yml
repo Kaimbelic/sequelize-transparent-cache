@@ -38,17 +38,14 @@ jobs:
       - name: Build packages
         run: npm run build --workspaces
 
-      - name: Change directory to example
-        run: cd examples/redis-mysql
-
-      - name: ls
-        run: ls -la
-
-      - name: Install dependencies
-        run: npm install --prefix examples/redis-mysql
+      - name: Install dependencies in example
+        run: npm install
+        working-directory: ./examples/redis-mysql
 
       - name: Build example
-        run: npm run build --prefix examples/redis-mysql
+        run: npm run build
+        working-directory: ./examples/redis-mysql
 
       - name: Run Docker Compose and tests
-        run: npm test --prefix examples/redis-mysql
+        run: npm test
+        working-directory: ./examples/redis-mysql
