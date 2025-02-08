@@ -1,5 +1,8 @@
 import VariableAdaptor from '../src/variable-adaptor';
 
+// Jest imports
+import { describe, expect, test, beforeEach } from '@jest/globals';
+
 describe('VariableAdaptor', () => {
   let adaptor: VariableAdaptor;
 

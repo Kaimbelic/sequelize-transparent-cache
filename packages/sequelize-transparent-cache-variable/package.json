@@ -2,7 +2,8 @@
   "name": "sequelize-transparent-cache-variable",
   "version": "1.0.0",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "tsc"
   },
   "devDependencies": {
     "@types/jest": "^27.5.2",
