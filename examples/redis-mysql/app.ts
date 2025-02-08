@@ -1,6 +1,6 @@
 import Redis from 'ioredis';
-import { IORedisAdaptor } from 'sequelize-transparent-cache-ioredis';
-import sequelizeCache from 'sequelize-transparent-cache';
+import { IORedisAdaptor } from '../../packages/sequelize-transparent-cache-ioredis';
+import sequelizeCache from '../../packages/sequelize-transparent-cache';
 import { Sequelize, Op } from 'sequelize';
 import { User } from './models/user';
 
