@@ -1,7 +1,14 @@
-import sequelize from './sequelize';
+import VariableAdaptor from '../../../../sequelize-transparent-cache-variable/src';
+import sequelizeCache from '../..';
+import sequelize, { User } from './sequelize';
+import { CacheableModelInstance } from '../../types';
 
-const { User } = sequelize.models;
-const cacheStore = User.cache().client().store;
+const variableAdaptor = new VariableAdaptor();
+const { withCache } = sequelizeCache(variableAdaptor);
+
+const CachedUser = withCache(User);
+
+const cacheStore = CachedUser.cache().client().store;
 
 beforeAll(() => sequelize.sync());
 
@@ -10,10 +17,10 @@ describe('Instance methods', () => {
     expect(cacheStore).toEqual({});
   });
 
-  const user = User.build({
+  const user: CacheableModelInstance<User> = CachedUser.build({
     id: 1,
     name: 'Daniel'
-  });
+  }) as CacheableModelInstance<User>;
 
   test('Create', async () => {
     await user.cache().save();
@@ -24,7 +31,7 @@ describe('Instance methods', () => {
     );
 
     // Cached user correctly loaded
-    expect((await User.cache().findByPk(1)).get()).toEqual(
+    expect((await CachedUser.cache().findByPk(1)).get()).toEqual(
       user.get()
     );
   });
@@ -45,7 +52,7 @@ describe('Instance methods', () => {
 
   test('Clear', async () => {
     // Cached user correctly loaded
-    expect((await User.cache().findByPk(1)).get()).toEqual(
+    expect((await CachedUser.cache().findByPk(1)).get()).toEqual(
       user.get()
     );
     await user.cache().clear();
@@ -57,6 +64,6 @@ describe('Instance methods', () => {
     await user.cache().destroy();
 
     expect(cacheStore.User[1]).toBeUndefined();
-    expect(await User.findByPk(1)).toBeNull();
+    expect(await CachedUser.findByPk(1)).toBeNull();
   });
 });
