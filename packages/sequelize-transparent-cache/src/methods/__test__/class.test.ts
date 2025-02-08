@@ -129,13 +129,6 @@ describe('Class methods', () => {
       return articles;
     };
 
-    const queryWithMiss = await getQuery();
-
-    const queryWithHit = await getQuery();
-
-    console.log(queryWithMiss);
-    console.log(queryWithHit);
-
     // Retrieved user with Article association
     expect(await getQuery()).toEqual(
       await getQuery()
