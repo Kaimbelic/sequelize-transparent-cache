@@ -1,4 +1,4 @@
-name: Build and Test
+name: Docker Compose Test
 
 on:
   push:
@@ -20,7 +20,7 @@ on:
           - debug
 
 jobs:
-  build-and-test:
+  redis-mysql-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,10 +33,10 @@ jobs:
           node-version: '22'
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --prefix examples/redis-mysql
 
       - name: Build packages
-        run: npm run build --workspaces
+        run: npm run build --prefix examples/redis-mysql
 
-      - name: Run tests
-        run: npm run test --workspaces
+      - name: Run Docker Compose and tests
+        run: npm test --prefix examples/redis-mysql

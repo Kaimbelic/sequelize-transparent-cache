@@ -4,7 +4,8 @@
   "main": "dist/app.js",
   "scripts": {
     "build": "tsc",
-    "start": "ts-node app.ts"
+    "start": "ts-node app.ts",
+    "test": "docker-compose up -d && npm run build && npm run start && docker-compose down"
   },
   "dependencies": {
     "ioredis": "^5.4.2",
