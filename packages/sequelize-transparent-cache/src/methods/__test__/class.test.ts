@@ -1,4 +1,4 @@
-import VariableAdaptor from '../../../../sequelize-transparent-cache-variable/dist';
+import VariableAdaptor from '../../../../sequelize-transparent-cache-variable/src';
 import sequelizeCache from '../..';
 import sequelize from './sequelize';
 
