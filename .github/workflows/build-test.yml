@@ -30,7 +30,7 @@ jobs:
           - sequelize-transparent-cache-variable
           - sequelize-transparent-cache-ioredis
           - sequelize-transparent-cache-memcached
-          - sequelize-transparent-cache-memcached-plus
+          - sequelize-transparent-cache-memcache-plus
 
     steps:
       - name: Checkout repository
