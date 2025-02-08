@@ -37,6 +37,17 @@ function instanceMethods(client: any, instance: Model) {
     },
 
     /**
+     * Reloads the instance and caches it.
+     * @param args - The reload options.
+     * @returns A promise that resolves to the reloaded instance.
+     */
+    reload(...args: [options?: FindOptions]): Promise<Model> {
+      return instance.reload
+        .apply(instance, args)
+        .then((instance: Model) => cache.save(client, instance));
+    },
+
+    /**
      * Destroys the instance and removes it from the cache.
      * @param args - The destroy options.
      * @returns A promise that resolves when the instance is destroyed.

@@ -95,6 +95,7 @@ function buildManualMethods(client: any, model: ModelStatic<Model>, customKey: s
     /**
      * Finds all instances and caches them.
      * @param args - The find options.
+     * @param customId - The custom cache id.
      * @returns A promise that resolves to the found instances or null.
      */
     findAll(...args: [options?: FindOptions]): Promise<Model[] | null> {
@@ -112,6 +113,7 @@ function buildManualMethods(client: any, model: ModelStatic<Model>, customKey: s
     /**
      * Finds one instance and caches it.
      * @param args - The find options.
+     * @param customId - The custom cache id.
      * @returns A promise that resolves to the found instance or null.
      */
     findOne(...args: [options?: FindOptions]): Promise<Model | null> {

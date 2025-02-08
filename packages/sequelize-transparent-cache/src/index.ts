@@ -1,4 +1,4 @@
-import { auto as buildClassAutoMethods } from './methods/class';
+import { auto as buildClassAutoMethods, manual as buildClassManualMethods } from './methods/class';
 import buildInstanceMethods from './methods/instance';
 import { Model, ModelStatic } from 'sequelize';
 import { CacheableModelClass } from './types';
@@ -15,8 +15,10 @@ export default (client: any) => ({
    * @returns The model class with caching methods.
    */
   withCache<T extends ModelStatic<Model>>(modelClass: T): T & CacheableModelClass {
-    (modelClass as any).cache = function () {
-      return buildClassAutoMethods(client, this);
+    (modelClass as any).cache = function (customId?: string) {
+      return customId
+        ? buildClassManualMethods(client, this, customId)
+        : buildClassAutoMethods(client, this);
     };
 
     (modelClass as any).prototype.cache = function () {

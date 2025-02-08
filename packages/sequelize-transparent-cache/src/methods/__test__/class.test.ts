@@ -1,7 +1,17 @@
+import VariableAdaptor from '../../../../sequelize-transparent-cache-variable/src';
+import sequelizeCache from '../..';
 import sequelize from './sequelize';
+import { CacheableModelClass } from '../../types';
 
-const { User, Article, Comment, Group } = sequelize.models;
-const cacheStore = User.cache().client().store;
+const variableAdaptor = new VariableAdaptor();
+const { withCache } = sequelizeCache(variableAdaptor);
+
+const CachedUser = withCache(sequelize.models.User);
+const CachedArticle = withCache(sequelize.models.Article);
+const CachedComment = withCache(sequelize.models.Comment);
+const CachedGroup = withCache(sequelize.models.Group);
+
+const cacheStore = CachedUser.cache().client().store;
 
 beforeAll(() => sequelize.sync());
 
@@ -11,25 +21,25 @@ describe('Class methods', () => {
   });
 
   test('Create', async () => {
-    const user = await User.cache().create({
+    const user = await CachedUser.cache().create({
       id: 1,
       name: 'Daniel'
     });
 
-    const article = await Article.cache().create({
+    const article = await CachedArticle.cache().create({
       uuid: '2086c06e-9dd9-4ee3-84b9-9e415dfd9c4c',
       title: 'New article'
     });
     await user.setArticles([article]);
     await user.cache().save();
 
-    const comment = await Comment.cache().create({
+    const comment = await CachedComment.cache().create({
       userId: user.id,
       articleUuid: article.uuid,
       body: 'New comment'
     });
 
-    const group = await Group.cache().create({
+    const group = await CachedGroup.cache().create({
       id: 1,
       name: 'Group of wonderful people'
     });
@@ -53,31 +63,31 @@ describe('Class methods', () => {
     );
 
     // Cached user with primary key correctly loaded
-    expect((await User.cache().findByPk(1)).get()).toEqual(
+    expect((await CachedUser.cache().findByPk(1)).get()).toEqual(
       user.get()
     );
 
     // Cached entity correctly loaded using custom primary key
-    expect((await Article.cache().findByPk(article.uuid)).get()).toEqual(
+    expect((await CachedArticle.cache().findByPk(article.uuid)).get()).toEqual(
       article.get()
     );
 
-    expect((await Group.cache().findByPk(1)).get()).toEqual(
+    expect((await CachedGroup.cache().findByPk(1)).get()).toEqual(
       group.get()
     );
   });
 
   test('Upsert', async () => {
-    const user = await User.cache().findByPk(1);
+    const user = await CachedUser.cache().findByPk(1);
 
-    await User.cache().upsert({
+    await CachedUser.cache().upsert({
       id: 1,
       name: 'Ivan'
     });
 
     // Timestamps synced after upsert
-    expect((await User.cache().findByPk(1)).get()).toEqual(
-      (await User.findByPk(1)).get()
+    expect((await CachedUser.cache().findByPk(1)).get()).toEqual(
+      (await CachedUser.findByPk(1))?.get()
     );
 
     await user.cache().reload();
@@ -90,15 +100,15 @@ describe('Class methods', () => {
       JSON.stringify(user) // TODO fix loading superfluous data
     );
 
-    const group = await Group.cache().findByPk(1);
+    const group = await CachedGroup.cache().findByPk(1);
 
-    await Group.cache().upsert({
+    await CachedGroup.cache().upsert({
       id: 1,
       name: 'Group of best people'
     });
 
-    expect((await Group.cache().findByPk(1)).get()).toEqual(
-      (await Group.findByPk(1)).get()
+    expect((await CachedGroup.cache().findByPk(1)).get()).toEqual(
+      (await CachedGroup.findByPk(1))?.get()
     );
 
     await group.cache().reload();
@@ -106,13 +116,13 @@ describe('Class methods', () => {
   });
 
   test('findByPk', async () => {
-    expect(await User.cache().findByPk(2)).toBeNull(); // Cache miss not causing any problem
+    expect(await CachedUser.cache().findByPk(2)).toBeNull(); // Cache miss not causing any problem
 
     delete cacheStore.User[1];
     // Deleted so first find goes directly to DB & and second one retrieves from cache with association
 
     const getQuery = async () => {
-      const user = await User.cache().findByPk(1, { include: [{ model: Article, as: 'Articles' }] });
+      const user = await CachedUser.cache().findByPk(1, { include: [{ model: CachedArticle, as: 'Articles' }] });
       const articles = user.Articles[0].get();
       return articles;
     };
@@ -123,7 +133,7 @@ describe('Class methods', () => {
     );
 
     const getGroupQuery = async () => {
-      const group = await Group.cache().findByPk(1, { include: [{ model: User, as: 'groupUsers' }] });
+      const group = await CachedGroup.cache().findByPk(1, { include: [{ model: CachedUser, as: 'groupUsers' }] });
       return group.get().groupUsers[0].get().name;
     };
     expect(await getGroupQuery()).toBe(
@@ -132,7 +142,7 @@ describe('Class methods', () => {
   });
 
   test('cache -> findAll', async () => {
-    const missingUsers = await User.cache('missingKey1').findAll({ where: { name: 'Not existent' } });
+    const missingUsers = await CachedUser.cache('missingKey1').findAll({ where: { name: 'Not existent' } });
 
     // Cache miss not causing any problem
     expect(missingUsers).toEqual(
@@ -142,12 +152,12 @@ describe('Class methods', () => {
     const key = 'IvanUserCacheKey1';
     const getQuery = () => ({
       where: { name: 'Ivan' },
-      include: [{ model: Article, as: 'Articles' }]
+      include: [{ model: CachedArticle, as: 'Articles' }]
     });
 
-    const [cacheMiss] = await User.cache(key).findAll(getQuery());
-    const [cacheHit] = await User.cache(key).findAll(getQuery());
-    const [dbValue] = await User.findAll(getQuery());
+    const [cacheMiss] = await CachedUser.cache(key).findAll(getQuery());
+    const [cacheHit] = await CachedUser.cache(key).findAll(getQuery());
+    const [dbValue] = await CachedUser.findAll(getQuery());
 
     // Returned value is the same, not matter if cache hit or miss
     expect(cacheMiss.get().Articles[0].get()).toEqual(
@@ -161,19 +171,19 @@ describe('Class methods', () => {
   });
 
   test('cache -> findOne', async () => {
-    const missingUser = await User.cache('MissingKey2').findOne({ where: { name: 'Not existent' } });
+    const missingUser = await CachedUser.cache('MissingKey2').findOne({ where: { name: 'Not existent' } });
 
     expect(missingUser).toBeNull(); // Cache miss not causing any problem
 
     const key = 'IvanUserCacheKey2';
     const getQuery = () => ({
       where: { name: 'Ivan' },
-      include: [{ model: Article, as: 'Articles' }]
+      include: [{ model: CachedArticle, as: 'Articles' }]
     });
 
-    const cacheMiss = await User.cache(key).findOne(getQuery());
-    const cacheHit = await User.cache(key).findOne(getQuery());
-    const dbValue = await User.findOne(getQuery());
+    const cacheMiss = await CachedUser.cache(key).findOne(getQuery());
+    const cacheHit = await CachedUser.cache(key).findOne(getQuery());
+    const dbValue = await CachedUser.findOne(getQuery());
 
     // Returned value is the same, not matter if cache hit or miss
     expect(cacheMiss.get().Articles[0].get().uuid).toBe(
@@ -182,18 +192,18 @@ describe('Class methods', () => {
 
     // Returned value is the same, as in db
     expect(cacheHit.get().Articles[0].get().uuid).toBe(
-      dbValue.get().Articles[0].get().uuid
+      dbValue?.get().Articles[0].get().uuid
     );
   });
 
   test('cache -> cache store', async () => {
     const key = 'ClearStoreUserCacheKey';
 
-    const cachedUser = await User.cache(key).findOne({ where: { name: 'Ivan' } });
-    const userFromDb = await User.findOne({ where: { name: 'Ivan' } });
+    const cachedUser = await CachedUser.cache(key).findOne({ where: { name: 'Ivan' } });
+    const userFromDb = await CachedUser.findOne({ where: { name: 'Ivan' } });
 
     // User cached after find and present in key using cache store
-    expect(userFromDb.get()).toEqual(
+    expect(userFromDb?.get()).toEqual(
       cachedUser.get()
     );
   });
@@ -201,15 +211,15 @@ describe('Class methods', () => {
   test('cache -> clear', async () => {
     const key = 'ClearUserCacheKey';
 
-    const cachedUser = await User.cache(key).findOne({ where: { name: 'Ivan' } });
-    const userFromDb = await User.findOne({ where: { name: 'Ivan' } });
+    const cachedUser = await CachedUser.cache(key).findOne({ where: { name: 'Ivan' } });
+    const userFromDb = await CachedUser.findOne({ where: { name: 'Ivan' } });
 
     // User cached after find and present in key
-    expect(userFromDb.get()).toEqual(
+    expect(userFromDb?.get()).toEqual(
       cachedUser.get()
     );
 
-    await User.cache(key).clear();
+    await CachedUser.cache(key).clear();
     expect(cacheStore.User[key]).toBeUndefined(); // User was deleted from cache
   });
 });
@@ -217,17 +227,17 @@ describe('Class methods', () => {
 describe('Recursive include tests', () => {
   test('Nested include depth == 1', async () => {
     // get all users of a group
-    const group = await Group.cache().create({
+    const group = await CachedGroup.cache().create({
       id: 123,
       name: 'Crazy Bloggers1'
     });
 
-    const user1 = await User.cache().create({
+    const user1 = await CachedUser.cache().create({
       id: 123,
       name: 'Bob1'
     });
 
-    const user2 = await User.cache().create({
+    const user2 = await CachedUser.cache().create({
       id: 124,
       name: 'Alice1'
     });
@@ -236,18 +246,18 @@ describe('Recursive include tests', () => {
     await group.cache().save();
 
     // From DB
-    const groupFromDB = await Group.cache('CrazyBloggers12').findAll({
+    const groupFromDB = await CachedGroup.cache('CrazyBloggers12').findAll({
       include: [{
-        model: User,
+        model: CachedUser,
         as: 'groupUsers'
       }],
       where: { id: 123 }
     });
 
     // From cache
-    const cachedGroup = await Group.cache('CrazyBloggers12').findAll({
+    const cachedGroup = await CachedGroup.cache('CrazyBloggers12').findAll({
       include: [{
-        model: User,
+        model: CachedUser,
         as: 'groupUsers'
       }],
       where: { id: 123 }
@@ -266,24 +276,24 @@ describe('Recursive include tests', () => {
 
   test('Nested include depth == 2', async () => {
     // get all the articles written by all users in a group
-    const group = await Group.cache().create({
+    const group = await CachedGroup.cache().create({
       id: 10,
       name: 'Crazy Bloggers1'
     });
 
-    const user1 = await User.cache().create({
+    const user1 = await CachedUser.cache().create({
       id: 10,
       name: 'Bob'
     });
 
-    const article = await Article.cache().create({
+    const article = await CachedArticle.cache().create({
       uuid: '2086c06e-9dd9-4ee3-84b9-9e415dfd9c4f',
       title: 'New article'
     });
     await user1.setArticles([article]);
     await user1.cache().save();
 
-    const user2 = await User.cache().create({
+    const user2 = await CachedUser.cache().create({
       id: 11,
       name: 'Alice'
     });
@@ -295,12 +305,12 @@ describe('Recursive include tests', () => {
     // Bob has written one article. Alice has written none
 
     // From DB
-    const groupFromDB = await Group.cache('CrazyBloggers1').findAll({
+    const groupFromDB = await CachedGroup.cache('CrazyBloggers1').findAll({
       include: [{
-        model: User,
+        model: CachedUser,
         as: 'groupUsers',
         include: [{
-          model: Article,
+          model: CachedArticle,
           as: 'Articles'
         }]
       }],
@@ -308,12 +318,12 @@ describe('Recursive include tests', () => {
     });
 
     // From cache
-    const cachedGroup = await Group.cache('CrazyBloggers1').findAll({
+    const cachedGroup = await CachedGroup.cache('CrazyBloggers1').findAll({
       include: [{
-        model: User,
+        model: CachedUser,
         as: 'groupUsers',
         include: [{
-          model: Article,
+          model: CachedArticle,
           as: 'Articles'
         }]
       }],
@@ -336,8 +346,8 @@ describe('Recursive include tests', () => {
     expect(cachedGroup[0].groupUsers[1].get().name).toEqual(groupFromDB[0].groupUsers[1].get().name);
     // Bob has an article; depth == 2
     expect(cachedGroup[0].groupUsers[0].Articles).toHaveLength(groupFromDB[0].groupUsers[0].Articles.length);
-    expect(cachedGroup[0].groupUsers[0].Articles[0].get().id).toEqual(groupFromDB[0].groupUsers[0].Articles[0].get().id);
-    expect(cachedGroup[0].groupUsers[0].Articles[0].get().name).toEqual(groupFromDB[0].groupUsers[0].Articles[0].get().name);
+    expect(cachedGroup[0].groupUsers[0].Articles[0].get().uuid).toEqual(groupFromDB[0].groupUsers[0].Articles[0].get().uuid);
+    expect(cachedGroup[0].groupUsers[0].Articles[0].get().title).toEqual(groupFromDB[0].groupUsers[0].Articles[0].get().title);
     // Alice has no article; depth == 2
     expect(cachedGroup[0].groupUsers[1].Articles).toEqual([]);
   });
