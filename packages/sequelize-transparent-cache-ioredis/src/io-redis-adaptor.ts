@@ -1,8 +1,10 @@
+import Redis from 'ioredis';
+
 /**
  * Options for the IORedisAdaptor.
  */
 interface IORedisAdaptorOptions {
-  client: any;
+  client: Redis;
   namespace?: string;
   lifetime?: number;
 }
@@ -11,7 +13,7 @@ interface IORedisAdaptorOptions {
  * Adaptor for integrating IORedis with sequelize-transparent-cache.
  */
 export class IORedisAdaptor {
-  private client: any;
+  private client: Redis;
   private namespace?: string;
   private lifetime?: number;
 
@@ -42,17 +44,21 @@ export class IORedisAdaptor {
    * @param {any} value - The value to set.
    * @returns {Promise<any>} - A promise that resolves when the value is set.
    */
-  set(key: string[], value: any): Promise<any> {
-    const options = this.lifetime ? ['EX', this.lifetime] : [];
-    return this.client.set(this._withNamespace(key), JSON.stringify(value), ...options);
+  set(key: string[], value: any): Promise<"OK"> {
+    if(this.lifetime){
+      return this.client.set(this._withNamespace(key), JSON.stringify(value), 'EX', this.lifetime.toString());
+    } else{
+      return this.client.set(this._withNamespace(key), JSON.stringify(value));
+    }
+  
   }
 
   /**
    * Gets a value from the cache.
    * @param {string[]} key - The key to get the value for.
-   * @returns {Promise<any>} - A promise that resolves with the value.
+   * @return {Promise<object|string|null>} - A promise that resolves to the value.
    */
-  async get(key: string[]): Promise<any> {
+  async get(key: string[]):Promise<object|string|null>{
     const data = await this.client.get(this._withNamespace(key));
     if (!data) {
       return data;
@@ -65,9 +71,9 @@ export class IORedisAdaptor {
   /**
    * Deletes a value from the cache.
    * @param {string[]} key - The key to delete the value for.
-   * @returns {Promise<any>} - A promise that resolves when the value is deleted.
+   * @returns {Promise<number>} - A promise that resolves when the value is deleted.
    */
-  del(key: string[]): Promise<any> {
+  del(key: string[]):Promise<number> {
     return this.client.del(this._withNamespace(key));
   }
 }
