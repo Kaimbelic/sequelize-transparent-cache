@@ -1,6 +1,6 @@
 /**
- * Default export for the IORedisAdaptor.
+ * Named export for the IORedisAdaptor.
  */
-import IORedisAdaptor from './io-redis-adaptor';
+import { IORedisAdaptor } from './io-redis-adaptor';
 
-export default IORedisAdaptor;
+export { IORedisAdaptor };

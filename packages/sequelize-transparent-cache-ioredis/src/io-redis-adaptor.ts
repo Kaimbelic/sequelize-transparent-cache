@@ -10,7 +10,7 @@ interface IORedisAdaptorOptions {
 /**
  * Adaptor for integrating IORedis with sequelize-transparent-cache.
  */
-class IORedisAdaptor {
+export class IORedisAdaptor {
   private client: any;
   private namespace?: string;
   private lifetime?: number;
@@ -71,5 +71,3 @@ class IORedisAdaptor {
     return this.client.del(this._withNamespace(key));
   }
 }
-
-export default IORedisAdaptor;

@@ -1,5 +1,5 @@
 import Redis from 'ioredis'
-import IORedisAdaptor from '../../packages/sequelize-transparent-cache-ioredis/dist'
+import {IORedisAdaptor} from '../../packages/sequelize-transparent-cache-ioredis/dist'
 import sequelizeCache from '../../packages/sequelize-transparent-cache/dist'
 import { Sequelize,Op } from 'sequelize'
 import { User } from './models/user'
