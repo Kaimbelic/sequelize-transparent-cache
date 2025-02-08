@@ -38,6 +38,14 @@ jobs:
       - name: Build packages
         run: npm run build --workspaces
 
+      - name: Link sequelize-transparent-cache
+        run: npm link sequelize-transparent-cache
+        working-directory: ./examples/redis-mysql
+
+      - name: Link sequelize-transparent-cache-ioredis
+        run: npm link sequelize-transparent-cache-ioredis
+        working-directory: ./examples/redis-mysql
+
       - name: Install dependencies
         run: npm install --prefix examples/redis-mysql
 
