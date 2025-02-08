@@ -1,8 +1,4 @@
-import VariableAdaptor from '../../../../sequelize-transparent-cache-variable/src';
-import sequelizeCache from '../..';
 import { Sequelize, DataTypes, Model, Optional, Options } from 'sequelize';
-
-const variableAdaptor = new VariableAdaptor();
 
 const options: Options = {
   logging: false,
@@ -165,12 +161,6 @@ UserGroup.initModel(sequelize);
 Group.initModel(sequelize);
 Article.initModel(sequelize);
 Comment.initModel(sequelize);
-
-const { withCache } = sequelizeCache(variableAdaptor);
-withCache(sequelize.models.User);
-withCache(sequelize.models.Article);
-withCache(sequelize.models.Comment);
-withCache(sequelize.models.Group);
 
 // Define associations
 User.hasMany(Article, { as: 'Articles' });
