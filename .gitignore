@@ -7,3 +7,4 @@ package-lock.json
 /packages/sequelize-transparent-cache/dist
 /packages/sequelize-transparent-cache-variable/dist
 /examples/redis-mysql/dist
+/examples/memcached-mysql/dist
