@@ -36,7 +36,7 @@ jobs:
         run: npm install
 
       - name: Build packages
-        run: npm run build --workspace=packages/*
+        run: npm run build --workspaces
 
       - name: Run tests
-        run: npm run test --workspace=packages/*
+        run: npm run test --workspaces
